@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "TrAIding Floor",
+  "version": "0.1.0",
+  "identifier": "com.traidingfloor.installer",
+  "build": {
+    "frontendDist": "../src",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "TrAIding Floor",
+        "width": 720,
+        "height": 540,
+        "minWidth": 540,
+        "minHeight": 420,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["dmg", "msi", "nsis", "deb", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Finance",
+    "shortDescription": "Self-hosted autonomous AI trading floor",
+    "longDescription": "TrAIding Floor is a self-hosted, token-gated, multi-venue autonomous AI trading platform. This installer launches and updates the Docker-based stack with one click. Keys never leave your machine.",
+    "publisher": "TrAIding Floor",
+    "copyright": "© 2026 TrAIding Floor",
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": null,
+      "providerShortName": null,
+      "entitlements": null,
+      "exceptionDomain": ""
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com"
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/traidingfloor/installer/releases/latest/download/latest.json"
+      ],
+      "pubkey": "REPLACE_WITH_TAURI_UPDATER_PUBKEY"
+    }
+  }
+}

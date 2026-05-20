@@ -1,0 +1,233 @@
+/* ─── Reset + base ─────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --primary: #2ea043;
+  --primary-hover: #3fb950;
+  --warn: #d29922;
+  --error: #f85149;
+  --ok: #3fb950;
+  --info: #58a6ff;
+  --radius: 8px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --surface-2: #eaeef2;
+    --border: #d0d7de;
+    --text: #1f2328;
+    --text-muted: #656d76;
+  }
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+body { display: flex; }
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────── */
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.logo {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 10px;
+}
+
+.title-block h1 { font-size: 18px; font-weight: 600; }
+.subtitle { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+
+/* ─── Screens ──────────────────────────────────────────────────────────── */
+
+.screen { display: none; flex: 1; flex-direction: column; }
+.screen.active { display: flex; }
+
+.screen h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.screen p {
+  color: var(--text);
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.muted { color: var(--text-muted); }
+.small { font-size: 12px; }
+
+code {
+  background: var(--surface);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  border: 1px solid var(--border);
+}
+
+/* ─── Actions / buttons ────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.06s ease;
+}
+button:hover { background: var(--border); }
+button:active { transform: translateY(1px); }
+
+button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+button.primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+button.muted {
+  color: var(--text-muted);
+}
+
+button.link {
+  background: transparent;
+  border: none;
+  color: var(--info);
+  padding: 8px 4px;
+}
+button.link:hover { background: transparent; text-decoration: underline; }
+
+/* ─── Status card (Docker screen) ──────────────────────────────────────── */
+
+.status-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.status-card .row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 6px 0;
+}
+
+.status-card .row + .row { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 6px; }
+
+.status-card .icon {
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.status-card .icon.ok    { color: var(--ok); }
+.status-card .icon.warn  { color: var(--warn); }
+.status-card .icon.error { color: var(--error); }
+.status-card .icon.info  { color: var(--info); }
+
+/* ─── Progress log ─────────────────────────────────────────────────────── */
+
+.log {
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  height: 280px;
+  overflow-y: auto;
+  margin-top: 16px;
+}
+
+.log li {
+  padding: 3px 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.log li .marker {
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.log li.ok    .marker { color: var(--ok); }
+.log li.warn  .marker { color: var(--warn); }
+.log li.error .marker { color: var(--error); }
+.log li.info  .marker { color: var(--info); }
+
+.log li.fade-in { animation: fadeIn 0.18s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── Footer ───────────────────────────────────────────────────────────── */
+
+footer {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer a { color: var(--text-muted); text-decoration: none; }
+footer a:hover { color: var(--info); }

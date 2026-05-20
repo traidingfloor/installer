@@ -1,0 +1,118 @@
+# =============================================================================
+# Cross-platform Tauri installer build
+# =============================================================================
+# Triggered on tag push (v*.*.*). Builds .dmg (Mac), .msi + .exe (Win), .deb +
+# .AppImage (Linux), attaches them to a GitHub Release, and writes the
+# latest.json manifest the Tauri auto-updater reads.
+#
+# Secrets you need to set in repo Settings → Secrets → Actions:
+#
+#   TAURI_SIGNING_PRIVATE_KEY        — Tauri updater key (generated locally
+#                                       via `tauri signer generate`). Required
+#                                       for signed auto-updates.
+#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD — Passphrase used when generating the key.
+#
+#   APPLE_CERTIFICATE                 — Optional. Apple Developer ID base64.
+#   APPLE_CERTIFICATE_PASSWORD        — Optional.
+#   APPLE_SIGNING_IDENTITY            — Optional. "Developer ID Application: …"
+#   APPLE_ID                          — Optional. Apple notarization account.
+#   APPLE_PASSWORD                    — Optional. App-specific password.
+#   APPLE_TEAM_ID                     — Optional.
+#
+#   WINDOWS_CERTIFICATE               — Optional. .pfx base64.
+#   WINDOWS_CERTIFICATE_PASSWORD      — Optional.
+#
+# Builds will succeed without any of the Apple/Windows certs — the resulting
+# binaries will be unsigned. Operators see a Gatekeeper / SmartScreen warning
+# on first launch but the app still works.
+# =============================================================================
+
+name: release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: "--target universal-apple-darwin"
+          - platform: ubuntu-22.04
+            args: ""
+          - platform: windows-latest
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Linux build deps
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Install Node (for tauri-action's bundled CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build + release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Tauri updater signing — required for auto-update to verify.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Apple signing + notarization (optional; build works unsigned)
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows signing (optional)
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "TrAIding Floor ${{ github.ref_name }}"
+          releaseBody: |
+            ## What's in this release
+
+            The native installer for TrAIding Floor. Download the file matching
+            your OS, double-click, follow the wizard. Operates Docker on your
+            behalf and opens the dashboard at <http://localhost>.
+
+            - **macOS** — `.dmg` (universal — Intel + Apple Silicon)
+            - **Windows** — `.msi` (Windows Installer) or `.exe` (NSIS)
+            - **Linux** — `.deb` (Debian / Ubuntu) or `.AppImage` (portable)
+
+            See the [public install repo](https://github.com/traidingfloor/install)
+            for command-line install options.
+          releaseDraft: false
+          prerelease: false
+          includeUpdaterJson: true
+          args: ${{ matrix.args }}

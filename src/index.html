@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrAIding Floor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <div class="logo">TF</div>
+      <div class="title-block">
+        <h1>TrAIding Floor</h1>
+        <p class="subtitle">Self-hosted autonomous AI trading floor</p>
+      </div>
+    </header>
+
+    <!-- Welcome screen — first thing the operator sees. -->
+    <section id="screen-welcome" class="screen active">
+      <h2>Welcome.</h2>
+      <p>
+        This installer will set up TrAIding Floor on your computer. It uses
+        <strong>Docker</strong> to run three sandboxed containers:
+        a Python backend, the Next.js dashboard, and an optional Telegram alert
+        watcher. Your API keys and trade history never leave your machine.
+      </p>
+      <p class="muted small">
+        Install location: <span id="install-dir-display">…</span>
+      </p>
+      <div class="actions">
+        <button id="btn-start" class="primary">Get started</button>
+      </div>
+    </section>
+
+    <!-- Docker check screen. If Docker is missing or stopped, the operator
+         lands here with clear remediation instructions. -->
+    <section id="screen-docker" class="screen">
+      <h2>Checking for Docker…</h2>
+      <div id="docker-status" class="status-card"></div>
+      <div class="actions">
+        <button id="btn-docker-retry">Retry</button>
+        <button id="btn-docker-help" class="link">How do I install Docker?</button>
+      </div>
+    </section>
+
+    <!-- Live progress feed during install + first boot. -->
+    <section id="screen-progress" class="screen">
+      <h2>Setting up your floor…</h2>
+      <p class="muted small">
+        First install downloads about 350 MB of images. Takes 1–3 minutes on
+        a decent connection.
+      </p>
+      <ul id="progress-log" class="log"></ul>
+    </section>
+
+    <!-- Ready / success screen. -->
+    <section id="screen-ready" class="screen">
+      <h2>You're live.</h2>
+      <p>
+        TrAIding Floor is running locally. The dashboard is at
+        <code>http://localhost</code>. The floor starts in <em>OBSERVE</em>
+        mode — no real trades fire until you flip strategies live from the
+        dashboard.
+      </p>
+      <div class="actions">
+        <button id="btn-open" class="primary">Open dashboard</button>
+        <button id="btn-open-folder">Show install folder</button>
+        <button id="btn-stop" class="muted">Stop containers</button>
+      </div>
+    </section>
+
+    <footer>
+      <span class="muted small">v<span id="app-version">0.1.0</span></span>
+      <a href="https://github.com/traidingfloor/install" id="link-source" class="muted small">github.com/traidingfloor/install</a>
+    </footer>
+  </main>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
