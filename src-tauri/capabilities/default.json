@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capabilities the installer window needs at runtime",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "shell:allow-open",
+    "dialog:default",
+    "process:allow-exit",
+    "updater:default",
+    "opener:default"
+  ]
+}
