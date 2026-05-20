@@ -1,0 +1,32 @@
+# Tauri / Rust build artifacts
+src-tauri/target/
+src-tauri/gen/
+src-tauri/WixTools/
+
+# Tauri-generated icons (regenerated from icons/icon.png on build)
+# Keep the source PNG, ignore the platform-specific outputs if regenerated.
+
+# Node
+node_modules/
+package-lock.json
+.npm/
+
+# Bundles
+*.dmg
+*.msi
+*.exe
+*.deb
+*.AppImage
+*.app/
+
+# Sign keys (NEVER commit)
+*.pem
+*.key
+*.pfx
+*.p12
+
+# IDE / OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
